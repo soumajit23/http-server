@@ -11,7 +11,7 @@ const server = net.createServer((socket) => {
 
     socket.on("data", (data) => {
         const request = data.toString();
-        const str = request.split(" ")[2];
+        const str = request.split(" ")[3];
         contentLength = str.length;
         socket.write(`HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${contentLength}\r\n\r\n${str}`);
         socket.end();
