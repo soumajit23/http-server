@@ -11,10 +11,18 @@ const server = net.createServer((socket) => {
 
     socket.on("data", (data) => {
         const request = data.toString();
-        const [requestLine] = request.split('\r\n');
-        const [method, path] = requestLine.split(' ');
-        contentLength = path.length;
-        socket.write(`HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${contentLength}\r\n\r\n${path}`);
+        if (request.startsWith('GET / ')) {
+            const res = "HTTP/1.1 200 OK\r\n\r\n";
+            socket.write(res);
+        } else if (request.includes('/echo/')) {
+            str = request.split('/echo/');
+            length = str.length();
+            const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${length}\r\n\r\n${str}`;
+            socket.write(res);
+        } else {
+            const res = "HTTP/1.1 404 Not Found\r\n\r\n";
+            socket.write(res);
+        }
         socket.end();
     });
 });
