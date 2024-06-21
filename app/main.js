@@ -11,13 +11,9 @@ const server = net.createServer((socket) => {
 
     socket.on("data", (data) => {
         const request = data.toString();
-        if (request.startsWith('GET / ')) {
-            const response = "HTTP/1.1 200 OK\r\n\r\n";
-            socket.write(response);
-        } else {
-            const response = "HTTP/1.1 404 Not Found\r\n\r\n";
-            socket.write(response);
-        }
+        const str = request.split(" ")[2];
+        contentLength = str.length;
+        socket.write(`HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${contentLength}\r\n\r\n${str}`);
         socket.end();
     });
 });
