@@ -13,7 +13,7 @@ const server = net.createServer((socket) => {
         const request = data.toString();
         const url = request.split(' ');
         const echoUrl = url[0];
-        const userAgentUrl = url[1];
+        const userAgentUrl = url[7];
 
         if (url == "/") {
             const res = "HTTP/1.1 200 OK\r\n\r\n";
@@ -22,7 +22,7 @@ const server = net.createServer((socket) => {
             const str = echoUrl.split('/echo/')[1];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${str.length}\r\n\r\n${str}`;
             socket.write(res);
-        } else if (userAgentUrl.includes('/user-agent')) {
+        } else if (userAgentUrl.includes('\r\n')) {
             const userAgent = userAgentUrl.split("\r\n")[0];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`;
             socket.write(res);
