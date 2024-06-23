@@ -11,19 +11,18 @@ const server = net.createServer((socket) => {
 
     socket.on("data", (data) => {
         const request = data.toString();
-        const url = request.split(' ');
-        const echoUrl = url[0];
-        const userAgentUrl = url[7];
+        const url = request.split(' ')[0];
+        const header = request.split('\r\n')[2];
 
         if (url == "/") {
             const res = "HTTP/1.1 200 OK\r\n\r\n";
             socket.write(res);
-        } else if (echoUrl.includes('/echo/')) {
-            const str = echoUrl.split('/echo/')[1];
+        } else if (url.includes('/echo/')) {
+            const str = url.split('/echo/')[1];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${str.length}\r\n\r\n${str}`;
             socket.write(res);
-        } else if (userAgentUrl.includes('\r\n')) {
-            const userAgent = userAgentUrl.split("\r\n")[0];
+        } else if (header.includes('User-Agent:')) {
+            const userAgent = header.split(' ')[1];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`;
             socket.write(res);
         } else {
