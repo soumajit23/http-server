@@ -24,7 +24,7 @@ const server = net.createServer((socket) => {
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`;
             socket.write(res);
         } else if (url.includes('/files/')) {
-            const filePath = path.join('/tmp/', url.replace('/files/', ''));
+            const filePath = path.join('/tmp', url.replace('/files/', ''));
 
             fs.readFile(filePath, (err, data) => {
                 if (err) {
