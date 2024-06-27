@@ -1,9 +1,7 @@
 const net = require("net");
+const fs = require('fs');
+const path = require('path');
 
-// You can use print statements as follows for debugging, they'll be visible when running tests.
-console.log("Logs from your program will appear here!");
-
-// Uncomment this to pass the first stage
 const server = net.createServer((socket) => {
     socket.on("close", () => {
         socket.end();
@@ -25,6 +23,18 @@ const server = net.createServer((socket) => {
             const userAgent = header.split(' ')[1];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`;
             socket.write(res);
+        } else if (url.startsWith('/files/')) {
+            const filePath = path.join ('/tmp/', url.replace('/files/', ''));
+
+            fs.readFile(filePath, (err, data) => {
+                if (err) {
+                    const res = "HTTP/1.1 404 Not Found\r\n\r\n";
+                    socket.write(res);
+                } else {
+                    const res = `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${data.length}\r\n\r\n${data}`;
+                    socket.write(res);
+                }
+            })
         } else {
             const res = "HTTP/1.1 404 Not Found\r\n\r\n";
             socket.write(res);
