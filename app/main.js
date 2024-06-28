@@ -45,6 +45,7 @@ const server = net.createServer((socket) => {
             
             fs.writeFileSync(filePath, content);
             const res = "HTTP/1.1 201 Created\r\n\r\n";
+            socket.write(res);
         } else {
             const res = "HTTP/1.1 404 Not Found\r\n\r\n";
             socket.write(res);
