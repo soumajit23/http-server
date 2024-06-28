@@ -23,8 +23,10 @@ const server = net.createServer((socket) => {
             const userAgent = header.split(' ')[1];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`;
             socket.write(res);
-        } else if (url.includes('/files/')) {
-            const filePath = path.join('/tmp', url.replace('/files/', ''));
+        } else if (url.startsWith('/files/')) {
+            const directory = process.argv[2];
+            const fileName = url.split('/files/')[1];
+            const filePath = path.join(directory, fileName);
 
             fs.readFile(filePath, (err, data) => {
                 if (err) {
