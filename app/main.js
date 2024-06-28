@@ -10,6 +10,7 @@ const server = net.createServer((socket) => {
     socket.on("data", (data) => {
         const request = data.toString();
         const url = request.split(' ')[1];
+        const method = request.split(' ')[0];
         const header = request.split('\r\n')[2];
 
         if (url == "/") {
@@ -23,7 +24,7 @@ const server = net.createServer((socket) => {
             const userAgent = header.split(' ')[1];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`;
             socket.write(res);
-        } else if (method === 'GET' && url.startsWith('/files/')) {
+        } else if (url.startsWith('/files/') && method === 'GET') {
             const directory = process.argv[3];
             const fileName = url.split('/files/')[1];
             const filePath = path.join(directory, fileName);
@@ -36,11 +37,11 @@ const server = net.createServer((socket) => {
                 const res = "HTTP/1.1 404 Not Found\r\n\r\n";
                 socket.write(res);
             }
-        } else if (method === 'POST' && url.startsWith('/files/')) {
+        } else if (url.startsWith('/files/') && method === 'POST') {
             const directory = process.argv[3];
             const fileName = url.split('/files/')[1];
             const filePath = path.join(directory, fileName);
-            const content = url[-1];
+            const content = request.split(' ')[request.split(' ').length - 1];
             
             fs.writeFileSync(filePath, content);
             const res = "HTTP/1.1 201 Created\r\n\r\n";
