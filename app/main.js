@@ -28,15 +28,14 @@ const server = net.createServer((socket) => {
             const fileName = url.split('/files/')[1];
             const filePath = path.join(directory, fileName);
 
-            fs.readFile(filePath, (err, data) => {
-                if (err) {
-                    const res = "HTTP/1.1 404 Not Found\r\n\r\n";
-                    socket.write(res);
-                } else {
-                    const res = `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${data.length}\r\n\r\n${data}`;
-                    socket.write(res);
-                }
-            })
+            if (fs.existsSync(filePath)) {
+                const data = fs.readFileSync(filePath);
+                const res = `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${data.length}\r\n\r\n${data}`;
+                socket.write(res);
+            } else {
+                const res = `HTTP/1.1 200 OK\r\nContent-Type: application/octet-stream\r\nContent-Length: ${data.length}\r\n\r\n${data}`;
+                socket.write(res);
+            }
         } else {
             const res = "HTTP/1.1 404 Not Found\r\n\r\n";
             socket.write(res);
