@@ -19,6 +19,7 @@ const server = net.createServer((socket) => {
         while (requestLines[i] && requestLines[i] !== '') {
             const [key, value] = requestLines[i].split(': ');
             headers[key.toLowerCase()] = value;
+            i++;
         }
 
         if (url == "/") {
