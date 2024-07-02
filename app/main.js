@@ -9,17 +9,30 @@ const server = net.createServer((socket) => {
 
     socket.on("data", (data) => {
         const request = data.toString();
+        const requestLines = request.split('\r\n');
         const url = request.split(' ')[1];
         const method = request.split(' ')[0];
-        const header = request.split('\r\n')[2];
+        const header = requestLines[2];
+
+        const headers = {};
+        let i =1;
+        while (requestLines[i] && requestLines[i] !== '') {
+            const [key, value] = requestLines[i].split(': ');
+            headers[key.toLowerCase()] = value;
+        }
 
         if (url == "/") {
             const res = "HTTP/1.1 200 OK\r\n\r\n";
             socket.write(res);
         } else if (url.includes('/echo/')) {
             const str = url.split('/echo/')[1];
-            const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${str.length}\r\n\r\n${str}`;
-            socket.write(res);
+            if (headers['accept-encoding'] === 'gzip') {
+                const res = `HTTP/1.1 200 OK\r\nContent-Type: plain/text\r\nContent-Encoding: gzip\r\n\r\n`;
+                socket.write(res);
+            } else {
+                const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${str.length}\r\n\r\n${str}`;
+                socket.write(res);
+            }
         } else if (header.includes('User-Agent:')) {
             const userAgent = header.split(' ')[1];
             const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${userAgent.length}\r\n\r\n${userAgent}`;
