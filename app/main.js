@@ -31,14 +31,10 @@ const server = net.createServer((socket) => {
             const acceptEncoding = headers['accept-encoding'];
             const encodings = acceptEncoding ? acceptEncoding.split(',').map(encoding => encoding.trim()) : [];
             if (encodings.includes('gzip')) {
-                zlib.gzip(str, (err, buffer) => {
-                    if(!err) {
-                        const res = `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: plain/text\r\nContent-Length: ${str.length}\r\n\r\n${buffer}`;
-                        socket.write(res);
-                    } else {
-                        console.log(err);
-                    }
-                });
+                const compressedBody = zlib.gzip(str);
+                const res = `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: plain/text\r\nContent-Length: ${str.length}\r\n\r\n`;
+                socket.write(res);
+                socket.write(compressedBody);
             } else {
                 const res = `HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ${str.length}\r\n\r\n${str}`;
                 socket.write(res);
