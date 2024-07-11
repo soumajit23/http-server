@@ -33,7 +33,7 @@ const server = net.createServer((socket) => {
             if (encodings.includes('gzip')) {
                 zlib.gzip(str, (err, buffer) => {
                     if(!err) {
-                        const res = `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: plain/text\r\nContent-Length: ${str.length}\r\n\r\n${buffer.toString('hex')}`;
+                        const res = `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: plain/text\r\nContent-Length: ${str.length}\r\n\r\n${buffer}`;
                         socket.write(res);
                     } else {
                         console.log(err);
