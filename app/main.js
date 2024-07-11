@@ -29,9 +29,9 @@ const server = net.createServer((socket) => {
         } else if (url.includes('/echo/')) {
             const str = url.split('/echo/')[1];
             const acceptEncoding = headers['accept-encoding'];
-            const encodings = acceptEncoding ? acceptEncoding.split(': ')[1] : "";
+            const encodings = acceptEncoding ? acceptEncoding.split(',').map(encoding => encoding.trim()) : [];
             
-            if (encodings.split(', ').includes('gzip')) {
+            if (encodings.includes('gzip')) {
                 const bodyContent = url.split('/')[2];
                 const compressedBody = zlib.gzipSync(bodyContent);
                 const res = `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: plain/text\r\nContent-Length: ${bodyContent.length}\r\n\r\n`;
