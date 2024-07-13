@@ -34,7 +34,7 @@ const server = net.createServer((socket) => {
             if (encodings.includes('gzip')) {
                 const bodyContent = url.split('/')[2];
                 const compressedBody = zlib.gzipSync(bodyContent);
-                const res = `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: plain/text\r\nContent-Length: ${bodyContent.length}\r\n\r\n`;
+                const res = `HTTP/1.1 200 OK\r\nContent-Encoding: gzip\r\nContent-Type: plain/text\r\nContent-Length: ${compressedBody.length}\r\n\r\n`;
                 socket.write(res);
                 socket.write(compressedBody);
             } else {
